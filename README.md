@@ -16,7 +16,7 @@ It also hosts a web dashboard running on port **3000** on your PBX server to eas
    ```bash
    cd /root
    git clone https://github.com/Ahmed-Emad02/adding-contacts-to-issabel4.git
-   cd adding-contacts-to-pbx4
+   cd adding-contacts-to-issabel4
    ```
 2. Make the installer script executable and run it as `root`:
    ```bash
