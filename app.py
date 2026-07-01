@@ -9,7 +9,6 @@ UPLOAD_FOLDER = '/tmp'
 
 @app.route('/')
 def index():
-    # Fetch contact count
     count = 0
     try:
         conn = sqlite3.connect(DB_PATH)
@@ -79,21 +78,27 @@ def upload_file():
             os.remove(filepath)
             return jsonify({"success": False, "error": "No contacts found in CSV"}), 400
             
-        # Bulk Insert into Database
+        # Bulk Insert into Database with In-Memory Duplicate Check for maximum speed
         conn = sqlite3.connect(DB_PATH)
         cur = conn.cursor()
+        
+        # Fetch existing contacts from SQLite once
+        cur.execute("SELECT name, last_name, telefono FROM contact;")
+        existing_contacts = set(cur.fetchall())
+        
         cur.execute("BEGIN TRANSACTION;")
         
         inserted = 0
         for c in contacts:
-            # Check if contact with same name & phone number already exists
-            cur.execute("SELECT id FROM contact WHERE name=? AND last_name=? AND telefono=?;", (c[0], c[1], c[2]))
-            if cur.fetchone():
+            # Check in memory set (O(1) lookup instead of O(N) database query)
+            key = (c[0], c[1], c[2])
+            if key in existing_contacts:
                 continue
             cur.execute(
                 "INSERT INTO contact (name, last_name, telefono, cell_phone, home_phone, status, directory) VALUES (?, ?, ?, ?, ?, 'isPublic', 'external');",
                 c
             )
+            existing_contacts.add(key)
             inserted += 1
             
         conn.commit()
