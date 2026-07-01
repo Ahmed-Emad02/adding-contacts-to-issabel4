@@ -1,5 +1,5 @@
 #!/bin/bash
-# Issabel 4 Contacts Uploader Installer
+# Sokrat Pro Tech Contacts Uploader Installer
 # Run this script as root!
 
 if [ "$EUID" -ne 0 ]; then
@@ -20,9 +20,10 @@ pip3 install flask
 echo "2. Copying Dashboard files to /opt/issabel-contacts-uploader..."
 mkdir -p /opt/issabel-contacts-uploader/templates
 mkdir -p /opt/issabel-contacts-uploader/static
-cp app.py /opt/issabel-contacts-uploader/
-cp templates/index.html /opt/issabel-contacts-uploader/templates/
-cp static/logo.png /opt/issabel-contacts-uploader/static/
+cp -f app.py /opt/issabel-contacts-uploader/
+cp -f templates/index.html /opt/issabel-contacts-uploader/templates/
+cp -f static/logo.png /opt/issabel-contacts-uploader/static/
+cp -f static/csv_template_guide.jpg /opt/issabel-contacts-uploader/static/
 
 # Ensure SQLite database directory is readable and writable
 chown -R asterisk:asterisk /opt/issabel-contacts-uploader
@@ -32,7 +33,7 @@ chmod 775 /var/www/db
 
 # 3. Setup Systemd Service
 echo "3. Creating and starting systemd service..."
-cp issabel-contacts-uploader.service /etc/systemd/system/
+cp -f issabel-contacts-uploader.service /etc/systemd/system/
 systemctl daemon-reload
 systemctl enable issabel-contacts-uploader
 systemctl start issabel-contacts-uploader

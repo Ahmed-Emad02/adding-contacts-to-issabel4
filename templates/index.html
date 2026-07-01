@@ -43,6 +43,7 @@
         .container {
             width: 100%;
             max-width: 550px;
+            margin: 40px 0;
         }
 
         .card {
@@ -182,6 +183,7 @@
             font-size: 1rem;
             transition: all 0.2s ease;
             box-shadow: 0 4px 15px rgba(220, 38, 38, 0.25);
+            margin-bottom: 10px;
         }
 
         .btn:hover {
@@ -231,6 +233,67 @@
             margin: 0 auto;
         }
 
+        /* CSV Guide Section Styles */
+        .guide-section {
+            margin-top: 35px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+            text-align: right;
+            direction: rtl;
+        }
+
+        .guide-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #fca5a5;
+            margin-bottom: 15px;
+            letter-spacing: -0.3px;
+        }
+
+        .guide-list {
+            list-style: none;
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+
+        .guide-list li {
+            margin-bottom: 8px;
+            position: relative;
+            padding-right: 20px;
+        }
+
+        .guide-list li::before {
+            content: "✓";
+            color: var(--primary);
+            position: absolute;
+            right: 0;
+            font-weight: 700;
+        }
+
+        .guide-image-container {
+            margin-top: 20px;
+            border: 1px solid rgba(220, 38, 38, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.4);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .guide-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            opacity: 0.85;
+            transition: all 0.3s ease;
+        }
+
+        .guide-image:hover {
+            opacity: 1;
+            transform: scale(1.01);
+        }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -266,6 +329,20 @@
 
             <div class="loading-spinner" id="spinner"></div>
             <div id="status-msg"></div>
+
+            <!-- CSV Template Guide -->
+            <div class="guide-section">
+                <h2 class="guide-title">دليل تنسيق الملف (CSV Template)</h2>
+                <ul class="guide-list">
+                    <li>يجب أن يحتوي الملف على ثلاثة أعمدة رئيسية: <strong>Name</strong> (الاسم الأول)، <strong>Last Name</strong> (الاسم الأخير)، و <strong>Work's Phone Number</strong> (أو <strong>Phone Number</strong>).</li>
+                    <li>تأكد من كتابة أسماء الأعمدة في السطر الأول تماماً كما هو موضح بالأسفل.</li>
+                    <li>يمكنك إضافة عمود إضافي باسم <strong>Cell Phone Number (SMS)</strong> لاستيراد رقم المحمول الثاني.</li>
+                    <li>تأكد من حفظ الملف بصيغة <strong>CSV (Comma Delimited)</strong>.</li>
+                </ul>
+                <div class="guide-image-container">
+                    <img src="{{ url_for('static', filename='csv_template_guide.jpg') }}" class="guide-image" alt="CSV Template Format Guide">
+                </div>
+            </div>
         </div>
     </div>
 
