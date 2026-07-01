@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issabel 4 Contacts Uploader</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(17, 24, 39, 0.7);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary: #8b5cf6;
+            --primary-hover: #7c3aed;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --success: #10b981;
+            --error: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(circle at top right, rgba(139, 92, 246, 0.15), transparent 400px),
+                              radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.1), transparent 400px);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 550px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(16px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #a78bfa, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        .stats {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stats span {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .stats strong {
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        .dropzone {
+            border: 2px dashed rgba(139, 92, 246, 0.3);
+            border-radius: 16px;
+            padding: 40px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            background: rgba(139, 92, 246, 0.02);
+            margin-bottom: 25px;
+        }
+
+        .dropzone:hover, .dropzone.dragover {
+            border-color: var(--primary);
+            background: rgba(139, 92, 246, 0.08);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.1);
+        }
+
+        .dropzone-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .dropzone-text {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 5px;
+        }
+
+        .dropzone-subtext {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        #selected-file {
+            margin-top: 15px;
+            font-size: 0.85rem;
+            color: #60a5fa;
+            font-weight: 600;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            border: none;
+            color: white;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-muted);
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        #status-msg {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            display: none;
+            text-align: left;
+            line-height: 1.4;
+        }
+
+        .msg-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #34d399;
+        }
+
+        .msg-error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+
+        .loading-spinner {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 0.8s linear infinite;
+            display: none;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>Issabel 4 Contacts</h1>
+            <p class="subtitle">Import Excel / Google Contacts CSV files</p>
+            
+            <div class="stats">
+                <span>Total Registered Contacts:</span>
+                <strong id="contact-count">{{ contact_count }}</strong>
+            </div>
+
+            <form id="upload-form">
+                <div class="dropzone" id="dropzone" onclick="document.getElementById('file-input').click()">
+                    <span class="dropzone-icon">📥</span>
+                    <p class="dropzone-text">Click or drag & drop CSV file</p>
+                    <p class="dropzone-subtext">Accepts Google Contacts CSV or standard Name/Phone Number CSV</p>
+                    <input type="file" id="file-input" name="file" accept=".csv">
+                    <p id="selected-file"></p>
+                </div>
+
+                <button type="submit" class="btn" id="submit-btn" disabled>Import Contacts</button>
+            </form>
+
+            <div class="loading-spinner" id="spinner"></div>
+            <div id="status-msg"></div>
+        </div>
+    </div>
+
+    <script>
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('file-input');
+        const selectedFile = document.getElementById('selected-file');
+        const submitBtn = document.getElementById('submit-btn');
+        const uploadForm = document.getElementById('upload-form');
+        const spinner = document.getElementById('spinner');
+        const statusMsg = document.getElementById('status-msg');
+
+        // Drag & drop logic
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropzone.addEventListener(eventName, e => {
+                e.preventDefault();
+                dropzone.classList.add('dragover');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, e => {
+                e.preventDefault();
+                dropzone.classList.remove('dragover');
+            }, false);
+        });
+
+        dropzone.addEventListener('drop', e => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if(files.length > 0) {
+                fileInput.files = files;
+                updateFileLabel();
+            }
+        });
+
+        fileInput.addEventListener('change', updateFileLabel);
+
+        function updateFileLabel() {
+            if(fileInput.files.length > 0) {
+                selectedFile.textContent = "📄 " + fileInput.files[0].name;
+                submitBtn.disabled = false;
+            } else {
+                selectedFile.textContent = "";
+                submitBtn.disabled = true;
+            }
+        }
+
+        uploadForm.addEventListener('submit', async e => {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            submitBtn.style.display = 'none';
+            spinner.style.display = 'block';
+            statusMsg.style.display = 'none';
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                spinner.style.display = 'none';
+                
+                if (result.success) {
+                    statusMsg.className = "msg-success";
+                    statusMsg.innerHTML = "<strong>Success!</strong> " + result.message;
+                    // Reload contact count after short delay
+                    setTimeout(() => location.reload(), 2000);
+                } else {
+                    submitBtn.style.display = 'block';
+                    statusMsg.className = "msg-error";
+                    statusMsg.innerHTML = "<strong>Error:</strong> " + result.error;
+                }
+                statusMsg.style.display = 'block';
+            } catch (err) {
+                spinner.style.display = 'none';
+                submitBtn.style.display = 'block';
+                statusMsg.className = "msg-error";
+                statusMsg.innerHTML = "<strong>Upload failed:</strong> " + err.message;
+                statusMsg.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
