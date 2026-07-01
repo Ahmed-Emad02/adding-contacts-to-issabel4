@@ -8,7 +8,7 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 echo "=========================================================="
-echo " Starting Issabel 4 Caller ID & Dashboard Setup"
+echo " Starting Sokrat Pro Tech Caller ID & Dashboard Setup"
 echo "=========================================================="
 
 # 1. Install dependencies
@@ -19,8 +19,10 @@ pip3 install flask
 # 2. Setup Dashboard directory
 echo "2. Copying Dashboard files to /opt/issabel-contacts-uploader..."
 mkdir -p /opt/issabel-contacts-uploader/templates
+mkdir -p /opt/issabel-contacts-uploader/static
 cp app.py /opt/issabel-contacts-uploader/
 cp templates/index.html /opt/issabel-contacts-uploader/templates/
+cp static/logo.png /opt/issabel-contacts-uploader/static/
 
 # Ensure SQLite database directory is readable and writable
 chown -R asterisk:asterisk /opt/issabel-contacts-uploader
@@ -34,6 +36,7 @@ cp issabel-contacts-uploader.service /etc/systemd/system/
 systemctl daemon-reload
 systemctl enable issabel-contacts-uploader
 systemctl start issabel-contacts-uploader
+systemctl restart issabel-contacts-uploader
 
 # 4. Open Firewalld port 3000
 echo "4. Opening port 3000 in Firewall..."
@@ -50,7 +53,6 @@ echo "5. Updating chan_dongle context configuration..."
 DONGLE_CONF="/etc/asterisk/dongle.conf"
 if [ -f "$DONGLE_CONF" ]; then
   cp "$DONGLE_CONF" "${DONGLE_CONF}.bak"
-  # Change context to from-dongle-custom in [defaults]
   sed -i 's/^context=from-trunk/context=from-dongle-custom/g' "$DONGLE_CONF"
   asterisk -rx "dongle reload now"
   echo "Updated dongle.conf and reloaded chan_dongle."
@@ -64,11 +66,9 @@ EXT_CONF="/etc/asterisk/extensions_custom.conf"
 if [ -f "$EXT_CONF" ]; then
   cp "$EXT_CONF" "${EXT_CONF}.bak"
   
-  # Remove previous definition if installer runs multiple times
   sed -i '/\[from-dongle-custom\]/,/^\s*$/d' "$EXT_CONF"
   sed -i '/\[from-dongle-lookup\]/,/^\s*$/d' "$EXT_CONF"
 
-  # Append new dialplan code
   cat << 'EOF' >> "$EXT_CONF"
 
 [from-dongle-custom]
