@@ -90,8 +90,7 @@ exten => _.,1,NoOp(--- Incoming call from Dongle on ${EXTEN} ---)
 same => n,Set(CALLERID(name)=${CALLERID(num)})
 same => n,Set(CLEAN_NUM=${FILTER(0-9,${CALLERID(num)})})
 same => n,Set(SEARCH_NUM=${IF($[${LEN(${CLEAN_NUM})} >= 10]?${CLEAN_NUM:-10}:${CLEAN_NUM})})
-same => n,Set(CONTACT_NAME=${SHELL(sqlite3 /var/www/db/address_book.db "SELECT trim(coalesce(name, '')) || ' ' || trim(coalesce(last_name, '')) FROM contact WHERE (telefono IS NOT NULL AND (replace(replace(replace(telefono, ' ', ''), '-', ''), '+', '') LIKE '%${SEARCH_NUM}' OR '${CLEAN_NUM}' LIKE '%' || replace(replace(replace(telefono, ' ', ''), '-', ''), '+', ''))) OR (cell_phone IS NOT NULL AND (replace(replace(replace(cell_phone, ' ', ''), '-', ''), '+', '') LIKE '%${SEARCH_NUM}' OR '${CLEAN_NUM}' LIKE '%' || replace(replace(replace(cell_phone, ' ', ''), '-', ''), '+', ''))) LIMIT 1" | tr -d '
-' | tr -d '')})
+same => n,Set(CONTACT_NAME=${SHELL(sqlite3 /var/www/db/address_book.db "SELECT trim(coalesce(name, '')) || ' ' || trim(coalesce(last_name, '')) FROM contact WHERE (telefono IS NOT NULL AND (replace(replace(replace(telefono, ' ', ''), '-', ''), '+', '') LIKE '%${SEARCH_NUM}' OR '${CLEAN_NUM}' LIKE '%' || replace(replace(replace(telefono, ' ', ''), '-', ''), '+', ''))) OR (cell_phone IS NOT NULL AND (replace(replace(replace(cell_phone, ' ', ''), '-', ''), '+', '') LIKE '%${SEARCH_NUM}' OR '${CLEAN_NUM}' LIKE '%' || replace(replace(replace(cell_phone, ' ', ''), '-', ''), '+', ''))) LIMIT 1" | tr -d '\n' | tr -d '\r')})
 same => n,GotoIf($[ "${CONTACT_NAME}" != "" ]?setname:skipname)
 same => n(setname),Set(CALLERID(name)=${CONTACT_NAME})
 same => n(skipname),NoOp(CallerID Name is set to: ${CALLERID(name)})
