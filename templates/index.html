@@ -42,8 +42,16 @@
 
         .container {
             width: 100%;
-            max-width: 550px;
+            max-width: 1100px;
             margin: 40px 0;
+        }
+
+        .dashboard-layout {
+            display: flex;
+            gap: 30px;
+            align-items: stretch;
+            justify-content: center;
+            width: 100%;
         }
 
         .card {
@@ -53,8 +61,21 @@
             border-radius: 24px;
             padding: 40px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 40px rgba(220, 38, 38, 0.05);
-            text-align: center;
             transition: border-color 0.3s ease;
+            flex: 1;
+            min-width: 0; /* Prevents flex items from overflowing */
+        }
+
+        .main-card {
+            text-align: center;
+        }
+
+        .guide-card {
+            text-align: right;
+            direction: rtl;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .card:hover {
@@ -69,9 +90,9 @@
         }
 
         .logo-main {
-            width: 160px;
+            width: 150px;
             height: auto;
-            max-height: 160px;
+            max-height: 150px;
             object-fit: contain;
             filter: drop-shadow(0 0 15px rgba(220, 38, 38, 0.2));
             animation: pulse 3s infinite ease-in-out;
@@ -97,6 +118,7 @@
             color: var(--text-muted);
             margin-bottom: 30px;
             direction: rtl;
+            text-align: center;
         }
 
         .stats {
@@ -104,7 +126,7 @@
             border: 1px solid var(--border-color);
             border-radius: 14px;
             padding: 15px 20px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -124,7 +146,7 @@
         .dropzone {
             border: 2px dashed rgba(220, 38, 38, 0.25);
             border-radius: 18px;
-            padding: 40px 20px;
+            padding: 35px 20px;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
@@ -183,7 +205,7 @@
             font-size: 1rem;
             transition: all 0.2s ease;
             box-shadow: 0 4px 15px rgba(220, 38, 38, 0.25);
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
         .btn:hover {
@@ -201,7 +223,7 @@
         }
 
         #status-msg {
-            margin-top: 25px;
+            margin-top: 20px;
             padding: 15px;
             border-radius: 10px;
             font-size: 0.9rem;
@@ -234,25 +256,19 @@
         }
 
         /* CSV Guide Section Styles */
-        .guide-section {
-            margin-top: 35px;
-            padding-top: 30px;
-            border-top: 1px solid var(--border-color);
-            text-align: right;
-            direction: rtl;
-        }
-
         .guide-title {
-            font-size: 1.15rem;
+            font-size: 1.25rem;
             font-weight: 700;
             color: #fca5a5;
             margin-bottom: 15px;
             letter-spacing: -0.3px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
         }
 
         .guide-list {
             list-style: none;
-            font-size: 0.88rem;
+            font-size: 0.85rem;
             color: var(--text-muted);
             margin-bottom: 20px;
             line-height: 1.7;
@@ -273,7 +289,7 @@
         }
 
         .guide-image-container {
-            margin-top: 20px;
+            margin-top: auto; /* Pushes image to bottom of guide card */
             border: 1px solid rgba(220, 38, 38, 0.1);
             border-radius: 16px;
             overflow: hidden;
@@ -298,47 +314,64 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Responsive Layout for Mobile/Tablets */
+        @media (max-width: 768px) {
+            .dashboard-layout {
+                flex-direction: column;
+                align-items: center;
+            }
+            .card {
+                width: 100%;
+                max-width: 550px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="card">
-            <div class="logo-container">
-                <img src="{{ url_for('static', filename='logo.png') }}" class="logo-main" alt="Sokrat Pro Tech Logo">
-            </div>
-            
-            <h1>Sokrat Pro Tech</h1>
-            <p class="subtitle">تنزيل ورفع جهات الاتصال إلى النظام</p>
-            
-            <div class="stats">
-                <span>Total Contacts:</span>
-                <strong id="contact-count">{{ contact_count }}</strong>
-            </div>
-
-            <form id="upload-form">
-                <div class="dropzone" id="dropzone" onclick="document.getElementById('file-input').click()">
-                    <p class="dropzone-text">حمل جهات الاتصال من هنا</p>
-                    <p class="dropzone-subtext">اسحب وأفلت ملف CSV هنا أو اضغط للاختيار</p>
-                    <p class="dropzone-hint">يدعم ملفات جوجل وملفات الاسم والرقم القياسية</p>
-                    <input type="file" id="file-input" name="file" accept=".csv">
-                    <p id="selected-file"></p>
+        <div class="dashboard-layout">
+            <!-- Left Column: Main Card -->
+            <div class="card main-card">
+                <div class="logo-container">
+                    <img src="{{ url_for('static', filename='logo.png') }}" class="logo-main" alt="Sokrat Pro Tech Logo">
+                </div>
+                
+                <h1>Sokrat Pro Tech</h1>
+                <p class="subtitle">تنزيل ورفع جهات الاتصال إلى النظام</p>
+                
+                <div class="stats">
+                    <span>Total Contacts:</span>
+                    <strong id="contact-count">{{ contact_count }}</strong>
                 </div>
 
-                <button type="submit" class="btn" id="submit-btn" disabled>استيراد جهات الاتصال</button>
-            </form>
+                <form id="upload-form">
+                    <div class="dropzone" id="dropzone" onclick="document.getElementById('file-input').click()">
+                        <p class="dropzone-text">حمل جهات الاتصال من هنا</p>
+                        <p class="dropzone-subtext">اسحب وأفلت ملف CSV هنا أو اضغط للاختيار</p>
+                        <p class="dropzone-hint">يدعم ملفات جوجل وملفات الاسم والرقم القياسية</p>
+                        <input type="file" id="file-input" name="file" accept=".csv">
+                        <p id="selected-file"></p>
+                    </div>
 
-            <div class="loading-spinner" id="spinner"></div>
-            <div id="status-msg"></div>
+                    <button type="submit" class="btn" id="submit-btn" disabled>استيراد جهات الاتصال</button>
+                </form>
 
-            <!-- CSV Template Guide -->
-            <div class="guide-section">
-                <h2 class="guide-title">دليل تنسيق الملف (CSV Template)</h2>
-                <ul class="guide-list">
-                    <li>يجب أن يحتوي الملف على ثلاثة أعمدة رئيسية: <strong>Name</strong> (الاسم الأول)، <strong>Last Name</strong> (الاسم الأخير)، و <strong>Work's Phone Number</strong> (أو <strong>Phone Number</strong>).</li>
-                    <li>تأكد من كتابة أسماء الأعمدة في السطر الأول تماماً كما هو موضح بالأسفل.</li>
-                    <li>يمكنك إضافة عمود إضافي باسم <strong>Cell Phone Number (SMS)</strong> لاستيراد رقم المحمول الثاني.</li>
-                    <li>تأكد من حفظ الملف بصيغة <strong>CSV (Comma Delimited)</strong>.</li>
-                </ul>
+                <div class="loading-spinner" id="spinner"></div>
+                <div id="status-msg"></div>
+            </div>
+
+            <!-- Right Column: CSV Template Guide -->
+            <div class="card guide-card">
+                <div>
+                    <h2 class="guide-title">دليل تنسيق الملف (CSV Template)</h2>
+                    <ul class="guide-list">
+                        <li>يجب أن يحتوي الملف على ثلاثة أعمدة رئيسية: <strong>Name</strong> (الاسم الأول)، <strong>Last Name</strong> (الاسم الأخير)، و <strong>Work's Phone Number</strong> (أو <strong>Phone Number</strong>).</li>
+                        <li>تأكد من كتابة أسماء الأعمدة في السطر الأول تماماً كما هو موضح بالأسفل.</li>
+                        <li>يمكنك إضافة عمود إضافي باسم <strong>Cell Phone Number (SMS)</strong> لاستيراد رقم المحمول الثاني.</li>
+                        <li>تأكد من حفظ الملف بصيغة <strong>CSV (Comma Delimited)</strong>.</li>
+                    </ul>
+                </div>
                 <div class="guide-image-container">
                     <img src="{{ url_for('static', filename='csv_template_guide.jpg') }}" class="guide-image" alt="CSV Template Format Guide">
                 </div>
